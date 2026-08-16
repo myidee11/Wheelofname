@@ -114,6 +114,45 @@ class WheelApp {
         this.showToast('โหลดรายชื่อตัวอย่างเรียบร้อยแล้ว ✨');
     }
 
+    loadTemplate(type) {
+        const currentClass = this.getActiveClass();
+        let items = [];
+
+        switch(type) {
+            case 'students':
+                items = this.getDefaultNames();
+                break;
+            case 'numbers30':
+                items = Array.from({ length: 30 }, (_, i) => `เลขที่ ${i + 1}`);
+                break;
+            case 'numbers50':
+                items = Array.from({ length: 50 }, (_, i) => `เลขที่ ${i + 1}`);
+                break;
+            case 'duties':
+                items = ['กวาดห้อง 🧹', 'ถูพื้น 🪣', 'ลบกระดาน 🧽', 'ยกเก้าอี้ 🪑', 'ทิ้งขยะ 🗑️', 'จัดโต๊ะ 📚'];
+                break;
+            case 'tasks':
+                items = [
+                    'ตอบคำถามข้อ 1 🙋',
+                    'สรุปบทเรียนวันนี้ 📖',
+                    'ออกมาเขียนหน้าห้อง ✍️',
+                    'เล่าเรื่องสนุกๆ 1 นาที ⏱️',
+                    'ร้องเพลงให้เพื่อนฟัง 🎵',
+                    'บอกสิ่งที่ชอบในวิชานี้ ⭐'
+                ];
+                break;
+            case 'yesno':
+                items = ['ใช่ (Yes) ✨', 'ไม่ใช่ (No) ❌', 'ใช่ (Yes) ✨', 'ไม่ใช่ (No) ❌', 'สุ่มใหม่อีกครั้ง 🎲'];
+                break;
+            default:
+                return;
+        }
+
+        currentClass.items = items;
+        this.syncClassNamesToUI();
+        this.showToast('โหลดแม่แบบสุ่มเรียบร้อยแล้ว 🎉');
+    }
+
     saveState() {
         try {
             localStorage.setItem(this.storageKey, JSON.stringify(this.state));
@@ -186,8 +225,16 @@ class WheelApp {
             });
         }
 
-        // Sample & Shuffle & Sort & Clear
-        document.getElementById('sampleBtn')?.addEventListener('click', () => this.loadSampleNames());
+        // Template Selector
+        document.getElementById('templateSelect')?.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val) {
+                this.loadTemplate(val);
+                e.target.value = '';
+            }
+        });
+
+        // Shuffle & Sort & Clear
         document.getElementById('shuffleBtn')?.addEventListener('click', () => this.shuffleNames());
         document.getElementById('sortBtn')?.addEventListener('click', () => this.sortNames());
         document.getElementById('clearBtn')?.addEventListener('click', () => this.clearNames());
