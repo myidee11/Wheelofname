@@ -1,18 +1,20 @@
 /**
  * Classroom Wheel of Names - Application Controller & State Management
+ * Clean architecture, LocalStorage persistence, Classroom management, Group generator
  */
 
 class WheelApp {
     constructor() {
-        this.storageKey = 'classroom_wheel_data_v1';
+        this.storageKey = 'classroom_wheel_data_v2';
         this.wheel = null;
         this.currentWinner = null;
+        this.lastGeneratedGroups = [];
 
-        // Default Data
+        // Default Classroom State
         this.state = {
             classes: [
                 {
-                    id: 'default-1',
+                    id: 'class-demo-1',
                     name: 'ห้องเรียนตัวอย่าง (ม.1/1)',
                     items: [
                         'กานต์วิภา',
@@ -30,18 +32,18 @@ class WheelApp {
                     ]
                 }
             ],
-            activeClassId: 'default-1',
+            activeClassId: 'class-demo-1',
             history: [],
             settings: {
                 spinDuration: 6, // in seconds
                 soundEnabled: true,
                 voiceEnabled: true,
                 volume: 0.8,
-                theme: 'pastelRainbow'
+                theme: 'carnivalBright'
             }
         };
 
-        this.groupMode = 'byCount'; // 'byCount' (N groups) or 'bySize' (N people per group)
+        this.groupMode = 'byCount'; // 'byCount' or 'bySize'
         this.groupValue = 3;
 
         this.init();
@@ -50,7 +52,7 @@ class WheelApp {
     init() {
         this.loadState();
 
-        // Initialize Wheel
+        // Initialize Wheel Canvas
         this.wheel = new WheelCanvas('wheelCanvas', {
             onSpinStart: () => this.handleSpinStart(),
             onSpinEnd: (winner) => this.handleSpinEnd(winner)
@@ -87,15 +89,14 @@ class WheelApp {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.state = { ...this.state, ...parsed };
-                // ensure active class exists and has names
                 if (!Array.isArray(this.state.classes) || this.state.classes.length === 0) {
                     this.state.classes = [
-                        { id: 'default-1', name: 'ห้องเรียนตัวอย่าง (ม.1/1)', items: this.getDefaultNames() }
+                        { id: 'class-demo-1', name: 'ห้องเรียนตัวอย่าง (ม.1/1)', items: this.getDefaultNames() }
                     ];
-                    this.state.activeClassId = 'default-1';
+                    this.state.activeClassId = 'class-demo-1';
                 }
                 if (!this.state.classes.some(c => c.id === this.state.activeClassId)) {
-                    this.state.activeClassId = this.state.classes[0]?.id || 'default-1';
+                    this.state.activeClassId = this.state.classes[0]?.id || 'class-demo-1';
                 }
                 const active = this.getActiveClass();
                 if (active && (!active.items || active.items.length === 0)) {
@@ -107,13 +108,19 @@ class WheelApp {
         }
     }
 
-    loadSampleNames() {
-        const currentClass = this.getActiveClass();
-        currentClass.items = this.getDefaultNames();
-        this.syncClassNamesToUI();
-        this.showToast('โหลดรายชื่อตัวอย่างเรียบร้อยแล้ว ✨');
+    saveState() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.state));
+        } catch (e) {
+            console.error('Failed to save state to localStorage:', e);
+        }
     }
 
+    getActiveClass() {
+        return this.state.classes.find(c => c.id === this.state.activeClassId) || this.state.classes[0];
+    }
+
+    // --- Templates ---
     loadTemplate(type) {
         const currentClass = this.getActiveClass();
         let items = [];
@@ -151,18 +158,6 @@ class WheelApp {
         currentClass.items = items;
         this.syncClassNamesToUI();
         this.showToast('โหลดแม่แบบสุ่มเรียบร้อยแล้ว 🎉');
-    }
-
-    saveState() {
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.state));
-        } catch (e) {
-            console.error('Failed to save state to localStorage:', e);
-        }
-    }
-
-    getActiveClass() {
-        return this.state.classes.find(c => c.id === this.state.activeClassId) || this.state.classes[0];
     }
 
     // --- DOM Event Listeners ---
@@ -214,7 +209,7 @@ class WheelApp {
                 currentClass.items.push(val);
                 this.syncClassNamesToUI();
                 quickAddInput.value = '';
-                this.showToast(`เพิ่ม "${val}" เรียบร้อยแล้ว`);
+                this.showToast(`เพิ่ม "${val}" เรียบร้อยแล้ว ✨`);
             }
         };
 
@@ -300,7 +295,7 @@ class WheelApp {
             });
         });
 
-        // Listen to native fullscreen change
+        // Native fullscreen change listener
         document.addEventListener('fullscreenchange', () => {
             if (!document.fullscreenElement) {
                 document.body.classList.remove('fullscreen-mode');
@@ -329,7 +324,7 @@ class WheelApp {
         const spinBtn = document.getElementById('spinBtn');
         if (spinBtn) {
             spinBtn.disabled = true;
-            spinBtn.innerHTML = '<span>กำลังสุ่ม...</span>';
+            spinBtn.innerHTML = '<span>กำลังสุ่ม... 🎡</span>';
         }
     }
 
@@ -337,7 +332,7 @@ class WheelApp {
         const spinBtn = document.getElementById('spinBtn');
         if (spinBtn) {
             spinBtn.disabled = false;
-            spinBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><span>หมุนวงล้อ</span>';
+            spinBtn.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg><span>หมุนวงล้อ</span>';
         }
 
         if (!winner) return;
@@ -360,8 +355,8 @@ class WheelApp {
             window.audioEngine.playFanfare();
             window.audioEngine.speakWinner(winner.text);
         }
-        if (window.confettiEngine) {
-            window.confettiEngine.burst(160);
+        if (window.confetti) {
+            window.confetti.burst(180);
         }
 
         // Open Winner Modal
@@ -383,7 +378,7 @@ class WheelApp {
             if (window.audioEngine) {
                 window.audioEngine.playPop();
             }
-            this.showToast(`นำ "${this.currentWinner.text}" ออกจากวงล้อแล้ว`);
+            this.showToast(`นำ "${this.currentWinner.text}" ออกจากวงล้อแล้ว 🗑️`);
         }
 
         this.closeModal('winnerModal');
@@ -394,11 +389,9 @@ class WheelApp {
         const currentClass = this.getActiveClass();
         if (!currentClass) return;
 
-        // Update dropdown selection
         const classSelect = document.getElementById('classSelect');
         if (classSelect) classSelect.value = currentClass.id;
 
-        // Sync names to wheel & textarea
         this.syncClassNamesToUI();
     }
 
@@ -506,7 +499,7 @@ class WheelApp {
         this.loadActiveClass();
         this.renderClassListModal();
         if (nameInput) nameInput.value = '';
-        this.showToast(`สร้างห้อง "${name}" เรียบร้อยแล้ว`);
+        this.showToast(`สร้างห้อง "${name}" เรียบร้อยแล้ว ✨`);
     }
 
     renderClassListModal() {
@@ -519,18 +512,18 @@ class WheelApp {
             div.style.display = 'flex';
             div.style.justifyContent = 'space-between';
             div.style.alignItems = 'center';
-            div.style.padding = '10px';
-            div.style.borderBottom = '1px solid var(--border-subtle)';
+            div.style.padding = '12px';
+            div.style.borderBottom = '1.5px solid var(--border-subtle)';
 
             div.innerHTML = `
                 <div>
-                    <strong style="font-size: 0.95rem;">${c.name}</strong>
-                    <div style="font-size: 0.78rem; color: var(--text-muted);">${c.items.length} รายชื่อ</div>
+                    <strong style="font-size: 1rem; color: var(--text-main);">${c.name}</strong>
+                    <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">${c.items.length} รายชื่อ</div>
                 </div>
                 <div style="display: flex; gap: 6px;">
                     ${this.state.classes.length > 1 ? `
-                        <button class="tool-btn delete-class-btn" data-id="${c.id}" style="color: var(--danger);">
-                            ลบ
+                        <button class="tool-btn delete-class-btn" data-id="${c.id}" style="color: var(--danger); font-weight: 700;">
+                            🗑️ ลบ
                         </button>
                     ` : ''}
                 </div>
@@ -638,15 +631,15 @@ class WheelApp {
         if (!container) return;
 
         container.innerHTML = '';
-        if (copyBtn) copyBtn.style.display = 'flex';
+        if (copyBtn) copyBtn.style.display = 'inline-flex';
 
         groups.forEach((group, index) => {
             const card = document.createElement('div');
             card.className = 'group-card';
             card.innerHTML = `
                 <div class="group-card-header">
-                    <span>กลุ่มที่ ${index + 1}</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: normal;">${group.length} คน</span>
+                    <span>👥 กลุ่มที่ ${index + 1}</span>
+                    <span style="font-size: 0.8rem; color: var(--primary); font-weight: 700;">${group.length} คน</span>
                 </div>
                 <div class="group-card-members">
                     ${group.join(', ')}
@@ -682,7 +675,7 @@ class WheelApp {
 
         list.innerHTML = '';
         if (this.state.history.length === 0) {
-            list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 24px; font-size: 0.88rem;">ยังไม่มีประวัติการสุ่ม</div>`;
+            list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 32px 16px; font-size: 0.95rem; font-weight: 600;">ยังไม่มีประวัติการสุ่ม<br><span style="font-size: 0.85rem; color: var(--text-light);">กดหมุนวงล้อเพื่อเริ่มบันทึก</span></div>`;
             return;
         }
 
@@ -691,13 +684,13 @@ class WheelApp {
             div.className = 'history-item';
             div.innerHTML = `
                 <div class="history-item-left">
-                    <span class="history-medal">🎉</span>
+                    <span class="history-medal">🏆</span>
                     <div>
                         <div class="history-name">${item.name}</div>
                         <div class="history-time">${item.className} • ${item.time}</div>
                     </div>
                 </div>
-                <span style="font-size: 0.8rem; color: var(--text-muted);">#${this.state.history.length - idx}</span>
+                <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary);">#${this.state.history.length - idx}</span>
             `;
             list.appendChild(div);
         });
@@ -806,20 +799,34 @@ class WheelApp {
         if (!container) {
             container = document.createElement('div');
             container.id = 'toastContainer';
-            container.className = 'toast-container';
+            container.style.position = 'fixed';
+            container.style.bottom = '24px';
+            container.style.right = '24px';
+            container.style.zIndex = '99999';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '8px';
             document.body.appendChild(container);
         }
 
         const toast = document.createElement('div');
-        toast.className = 'toast';
+        toast.style.background = '#1E1B4B';
+        toast.style.color = '#FFFFFF';
+        toast.style.padding = '12px 20px';
+        toast.style.borderRadius = '12px';
+        toast.style.fontWeight = '700';
+        toast.style.fontSize = '0.95rem';
+        toast.style.boxShadow = '0 8px 24px rgba(0,0,0,0.2)';
+        toast.style.animation = 'slideIn 0.3s ease-out';
         toast.textContent = message;
         container.appendChild(toast);
 
         setTimeout(() => {
             toast.style.opacity = '0';
-            toast.style.transform = 'translateY(-10px)';
+            toast.style.transform = 'translateY(10px)';
             toast.style.transition = 'all 0.3s ease';
             setTimeout(() => toast.remove(), 300);
+        }, 2500);
     }
 
     toggleFullscreen() {

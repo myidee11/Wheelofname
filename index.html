@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>วงล้อสุ่มชื่อนักเรียน - Classroom Wheel of Names (ไม่มีโฆษณา)</title>
-    <meta name="description" content="เว็บแอปพลิเคชันสุ่มชื่อนักเรียนแบบวงล้อ โทนสีพาสเทลสวยงาม สำหรับคุณครูและห้องเรียน ไม่มีโฆษณา มีเสียงเอฟเฟกต์ และระบบแบ่งกลุ่ม">
+    <meta name="description" content="เว็บแอปพลิเคชันสุ่มชื่อนักเรียนแบบวงล้อ สีสันสดใส ตัวหนังสือใหญ่ชัดเจน สำหรับคุณครูและห้องเรียน ไม่มีโฆษณา มีเสียงเอฟเฟกต์ และระบบสุ่มแบ่งกลุ่ม">
     
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎡</text></svg>">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=3.0">
 </head>
 <body>
     <div class="app-container">
@@ -29,12 +29,12 @@
             <div class="header-actions">
                 <!-- Class Selector -->
                 <div class="class-selector-wrapper" title="เลือกหรือจัดการห้องเรียน">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                         <polyline points="9 22 9 12 15 12 15 22"></polyline>
                     </svg>
                     <select id="classSelect" class="class-select" aria-label="เลือกห้องเรียน"></select>
-                    <button id="manageClassBtn" class="tool-btn" title="จัดการห้องเรียน" style="padding: 4px 8px; border: none; background: transparent;">
+                    <button id="manageClassBtn" class="tool-btn" title="จัดการห้องเรียน" style="padding: 4px 8px; border: none; background: transparent; font-size: 1.1rem;">
                         ⚙️
                     </button>
                 </div>
@@ -48,7 +48,7 @@
                 </button>
 
                 <!-- Fullscreen Button -->
-                <button id="fullscreenBtn" class="icon-btn" title="โหมดเต็มจอ (สำหรับโปรเจกเตอร์)" aria-label="โหมดเต็มจอ">
+                <button id="fullscreenBtn" class="icon-btn" title="โหมดเต็มจอ (สำหรับฉายโปรเจกเตอร์)" aria-label="โหมดเต็มจอ">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
                     </svg>
@@ -58,7 +58,7 @@
 
         <!-- Exit Fullscreen Button (Floating) -->
         <button id="exitFullscreenBtn" class="icon-btn fullscreen-exit-btn" title="ออกจากโหมดเต็มจอ">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -74,7 +74,7 @@
 
                 <div class="wheel-controls-bar">
                     <button id="spinBtn" class="btn-spin-large">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
                         <span>หมุนวงล้อ</span>
@@ -110,7 +110,7 @@
                         <div class="names-toolbar">
                             <span id="namesCountBadge" class="names-count-badge">0 รายชื่อ</span>
                             <div class="toolbar-buttons">
-                                <select id="templateSelect" class="tool-btn" style="cursor: pointer; outline: none; font-weight: 600;">
+                                <select id="templateSelect" class="tool-btn" style="cursor: pointer; outline: none; font-weight: 700;">
                                     <option value="">📋 แม่แบบสุ่ม...</option>
                                     <option value="students">👥 รายชื่อนักเรียน (12 คน)</option>
                                     <option value="numbers30">🔢 เลขที่ 1 - 30</option>
@@ -119,19 +119,19 @@
                                     <option value="tasks">❓ สุ่มคำถาม / กิจกรรม</option>
                                     <option value="yesno">⚖️ ใช่ / ไม่ใช่ (Yes/No)</option>
                                 </select>
-                                <button id="shuffleBtn" class="tool-btn" title="สลับตำแหน่ง">🔀 สลับ</button>
+                                <button id="shuffleBtn" class="tool-btn" title="สลับตำแหน่งรายชื่อ">🔀 สลับ</button>
                                 <button id="sortBtn" class="tool-btn" title="เรียงลำดับ ก-ฮ / A-Z">📶 เรียง</button>
-                                <button id="clearBtn" class="tool-btn" title="ล้างทั้งหมด" style="color: var(--danger);">🗑️ ล้าง</button>
+                                <button id="clearBtn" class="tool-btn" title="ล้างรายชื่อทั้งหมด" style="color: var(--danger);">🗑️ ล้าง</button>
                             </div>
                         </div>
 
                         <div class="names-quick-input">
-                            <input type="text" id="quickAddInput" class="input-text" placeholder="พิมพ์ชื่อแล้วกด Enter...">
-                            <button id="quickAddBtn" class="btn-secondary">เพิ่ม</button>
+                            <input type="text" id="quickAddInput" class="input-text" placeholder="พิมพ์ชื่อนักเรียนแล้วกด Enter...">
+                            <button id="quickAddBtn" class="btn-secondary" style="background: var(--primary); color: #FFF; border: none;">+ เพิ่ม</button>
                         </div>
 
                         <div class="names-textarea-wrapper">
-                            <textarea id="namesTextarea" class="names-textarea" placeholder="พิมพ์หรือวางรายชื่อนักเรียนที่นี่ (บรรทัดละ 1 ชื่อ)..."></textarea>
+                            <textarea id="namesTextarea" class="names-textarea" placeholder="พิมพ์หรือวางรายชื่อนักเรียนที่นี่ (บรรทัดละ 1 ชื่อ)...&#10;เช่น&#10;กานต์วิภา&#10;ขวัญข้าว&#10;จิดาภา"></textarea>
                         </div>
                     </div>
 
@@ -150,7 +150,7 @@
                             </div>
 
                             <div class="group-input-row">
-                                <span id="groupStepperLabel" style="font-weight: 600; font-size: 0.9rem;">จำนวนกลุ่ม:</span>
+                                <span id="groupStepperLabel" style="font-weight: 700; font-size: 0.95rem;">จำนวนกลุ่ม:</span>
                                 <div class="number-stepper">
                                     <button id="stepperMinus" class="stepper-btn">−</button>
                                     <span id="groupStepperVal" class="stepper-val">3</span>
@@ -160,7 +160,7 @@
                         </div>
 
                         <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                            <button id="generateGroupsBtn" class="btn-secondary" style="flex: 1; background: var(--primary); color: #FFF; border: none;">
+                            <button id="generateGroupsBtn" class="btn-secondary" style="flex: 1; background: var(--primary); color: #FFF; border: none; font-size: 1rem;">
                                 🎲 สุ่มแบ่งกลุ่ม
                             </button>
                             <button id="copyGroupsBtn" class="btn-secondary" style="display: none;" title="คัดลอกผลลัพธ์">
@@ -169,8 +169,8 @@
                         </div>
 
                         <div id="groupsResultContainer" class="groups-result-container">
-                            <div style="text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 0.88rem;">
-                                กดปุ่ม "สุ่มแบ่งกลุ่ม" เพื่อจัดกลุ่มนักเรียนในห้องโดยอัตโนมัติ
+                            <div style="text-align: center; color: var(--text-muted); padding: 36px 10px; font-size: 0.92rem; font-weight: 600;">
+                                กดปุ่ม "🎲 สุ่มแบ่งกลุ่ม" เพื่อจัดกลุ่มนักเรียนโดยอัตโนมัติ
                             </div>
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                     <!-- Tab 3: History -->
                     <div id="historyPane" class="tab-pane">
                         <div class="history-header">
-                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">รายชื่อที่สุ่มได้</span>
+                            <span style="font-size: 0.95rem; font-weight: 800; color: var(--text-main);">รายชื่อที่สุ่มได้</span>
                             <button id="clearHistoryBtn" class="tool-btn" style="color: var(--danger);">ล้างประวัติ</button>
                         </div>
                         <div id="historyList" class="history-list"></div>
@@ -193,9 +193,9 @@
                                     <span class="setting-title">ระยะเวลาการหมุน</span>
                                     <span class="setting-desc">ปรับความเร็วและความตื่นเต้น</span>
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="display: flex; align-items: center; gap: 10px;">
                                     <input type="range" id="durationSlider" class="range-slider" min="3" max="15" step="1" value="6">
-                                    <span id="durationVal" style="font-weight: 600; font-size: 0.85rem; width: 60px; text-align: right;">6 วินาที</span>
+                                    <span id="durationVal" style="font-weight: 800; font-size: 0.92rem; width: 65px; text-align: right; color: var(--primary);">6 วินาที</span>
                                 </div>
                             </div>
 
@@ -223,52 +223,74 @@
                                 </label>
                             </div>
 
-                            <!-- Wheel Pastel Theme Presets -->
+                            <!-- Wheel Color Theme Presets -->
                             <div style="margin-top: 6px;">
-                                <div class="setting-title" style="margin-bottom: 4px;">ธีมสีพาสเทลวงล้อ</div>
+                                <div class="setting-title" style="margin-bottom: 6px;">ธีมสีสันวงล้อ</div>
                                 <div class="theme-picker-grid">
-                                    <button class="theme-option-btn active" data-theme="pastelRainbow">
+                                    <button class="theme-option-btn active" data-theme="carnivalBright">
                                         <div class="theme-preview-bars">
-                                            <span style="background: #FFB7B2;"></span>
-                                            <span style="background: #FFDAC1;"></span>
-                                            <span style="background: #E2F0CB;"></span>
-                                            <span style="background: #B5EAD7;"></span>
-                                            <span style="background: #C7CEEA;"></span>
+                                            <span style="background: #FF3366;"></span>
+                                            <span style="background: #FF9900;"></span>
+                                            <span style="background: #FFCC00;"></span>
+                                            <span style="background: #10B981;"></span>
+                                            <span style="background: #00D2D3;"></span>
                                         </div>
-                                        <span class="theme-option-name">Pastel Rainbow</span>
+                                        <span class="theme-option-name">🌈 Carnival Bright</span>
                                     </button>
 
-                                    <button class="theme-option-btn" data-theme="candySweet">
+                                    <button class="theme-option-btn" data-theme="candyPop">
                                         <div class="theme-preview-bars">
-                                            <span style="background: #FF9AA2;"></span>
-                                            <span style="background: #FFF1C5;"></span>
-                                            <span style="background: #8FC1E3;"></span>
-                                            <span style="background: #E8DFF5;"></span>
-                                            <span style="background: #F3C4FB;"></span>
+                                            <span style="background: #FF2E93;"></span>
+                                            <span style="background: #FF8A00;"></span>
+                                            <span style="background: #FFD600;"></span>
+                                            <span style="background: #00E676;"></span>
+                                            <span style="background: #00B0FF;"></span>
                                         </div>
-                                        <span class="theme-option-name">Candy Sweet</span>
+                                        <span class="theme-option-name">🍭 Candy Pop</span>
                                     </button>
 
-                                    <button class="theme-option-btn" data-theme="mintPeach">
+                                    <button class="theme-option-btn" data-theme="tropicalFiesta">
                                         <div class="theme-preview-bars">
+                                            <span style="background: #00E5FF;"></span>
+                                            <span style="background: #00C853;"></span>
+                                            <span style="background: #FFD600;"></span>
+                                            <span style="background: #FF6D00;"></span>
+                                            <span style="background: #D500F9;"></span>
+                                        </div>
+                                        <span class="theme-option-name">🌴 Tropical Fiesta</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="sunsetGlow">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #FF1744;"></span>
+                                            <span style="background: #FF5252;"></span>
+                                            <span style="background: #FF9100;"></span>
+                                            <span style="background: #FFD740;"></span>
+                                            <span style="background: #E040FB;"></span>
+                                        </div>
+                                        <span class="theme-option-name">🌅 Sunset Glow</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="arcadeNeon">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #00F5D4;"></span>
+                                            <span style="background: #7B2CBF;"></span>
+                                            <span style="background: #F72585;"></span>
+                                            <span style="background: #4CC9F0;"></span>
+                                            <span style="background: #FFB703;"></span>
+                                        </div>
+                                        <span class="theme-option-name">⚡ Arcade Neon</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="pastelSweet">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #FFAAA6;"></span>
+                                            <span style="background: #FFD3B6;"></span>
                                             <span style="background: #A8E6CF;"></span>
                                             <span style="background: #DCEDC1;"></span>
-                                            <span style="background: #FFD3B6;"></span>
-                                            <span style="background: #FFAAA6;"></span>
-                                            <span style="background: #BEE1E6;"></span>
-                                        </div>
-                                        <span class="theme-option-name">Mint & Peach</span>
-                                    </button>
-
-                                    <button class="theme-option-btn" data-theme="sakuraLilac">
-                                        <div class="theme-preview-bars">
-                                            <span style="background: #FFC8DD;"></span>
-                                            <span style="background: #FFAFCC;"></span>
-                                            <span style="background: #BDE0FE;"></span>
                                             <span style="background: #CDB4DB;"></span>
-                                            <span style="background: #D0F4DE;"></span>
                                         </div>
-                                        <span class="theme-option-name">Sakura Lilac</span>
+                                        <span class="theme-option-name">🌸 Pastel Sweet</span>
                                     </button>
                                 </div>
                             </div>
@@ -288,7 +310,7 @@
 
             <div class="winner-actions-row">
                 <button id="removeWinnerBtn" class="btn-remove-winner">
-                    🗑️ ลบชื่อออก
+                    🗑️ ลบชื่อนี้ออก
                 </button>
                 <button id="keepWinnerBtn" class="btn-keep-winner">
                     ✨ เก็บชื่อไว้ / สุ่มต่อ
@@ -302,14 +324,14 @@
         <div class="modal-card">
             <div class="modal-header">
                 <h3 class="modal-title">🏫 จัดการห้องเรียน</h3>
-                <button class="tool-btn modal-close-btn" style="border: none; font-size: 1.2rem;">✕</button>
+                <button class="tool-btn modal-close-btn" style="border: none; font-size: 1.3rem;">✕</button>
             </div>
             <div class="modal-body">
                 <div style="display: flex; gap: 8px; margin-bottom: 16px;">
                     <input type="text" id="newClassNameInput" class="input-text" placeholder="ชื่อห้องเรียนใหม่ (เช่น ม.1/2)">
-                    <button id="addNewClassBtn" class="btn-secondary" style="background: var(--primary); color: #FFF; border: none;">+ เพิ่มห้อง</button>
+                    <button id="addNewClassBtn" class="btn-secondary" style="background: var(--primary); color: #FFF; border: none; font-weight: 700;">+ เพิ่มห้อง</button>
                 </div>
-                <div id="classListContainer" style="max-height: 240px; overflow-y: auto;"></div>
+                <div id="classListContainer" style="max-height: 260px; overflow-y: auto;"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary modal-close-btn">ปิด</button>
@@ -318,9 +340,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/audio.js?v=2.0"></script>
-    <script src="js/confetti.js?v=2.0"></script>
-    <script src="js/wheel.js?v=2.0"></script>
-    <script src="js/app.js?v=2.0"></script>
+    <script src="js/audio.js?v=3.0"></script>
+    <script src="js/confetti.js?v=3.0"></script>
+    <script src="js/wheel.js?v=3.0"></script>
+    <script src="js/app.js?v=3.0"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /**
- * Classroom Wheel of Names - Confetti Celebration Engine
- * High-performance Canvas particle confetti with Pastel color palette
+ * Classroom Wheel of Names - Vibrant Confetti & Sparkles Engine
+ * Multi-shape particles (ribbons, stars, circles) with energetic celebration physics
  */
 
 class ConfettiEngine {
@@ -10,8 +10,8 @@ class ConfettiEngine {
         this.particles = [];
         this.animationId = null;
         this.colors = [
-            '#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA',
-            '#A0C4FF', '#BDB2FF', '#FFC6FF', '#FDFFB6', '#CAFFBF', '#9BF6FF'
+            '#FF3366', '#FF9900', '#FFCC00', '#10B981', '#00D2D3',
+            '#6366F1', '#8B5CF6', '#EC4899', '#00E5FF', '#FF1744'
         ];
         this.init();
     }
@@ -41,31 +41,29 @@ class ConfettiEngine {
         const dpr = window.devicePixelRatio || 1;
         this.canvas.width = window.innerWidth * dpr;
         this.canvas.height = window.innerHeight * dpr;
-        this.ctx.scale(dpr, dpr);
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    /**
-     * Trigger a burst of confetti
-     * @param {number} count - number of particles
-     */
-    burst(count = 150) {
+    burst(count = 180) {
         this.resize();
         const width = window.innerWidth;
         const height = window.innerHeight;
 
-        // Origin points: left side and right side for grand stage entrance
         const origins = [
-            { x: width * 0.2, y: height * 0.6, angle: -Math.PI / 3 },
-            { x: width * 0.8, y: height * 0.6, angle: -2 * Math.PI / 3 },
-            { x: width * 0.5, y: height * 0.4, angle: -Math.PI / 2 }
+            { x: width * 0.15, y: height * 0.65, angle: -Math.PI / 3 },
+            { x: width * 0.85, y: height * 0.65, angle: -2 * Math.PI / 3 },
+            { x: width * 0.5, y: height * 0.45, angle: -Math.PI / 2 }
         ];
 
         origins.forEach(origin => {
             const particlesPerOrigin = Math.floor(count / origins.length);
             for (let i = 0; i < particlesPerOrigin; i++) {
-                const spread = (Math.random() - 0.5) * 1.4;
-                const speed = 12 + Math.random() * 18;
+                const spread = (Math.random() - 0.5) * 1.5;
+                const speed = 14 + Math.random() * 20;
                 const angle = origin.angle + spread;
+
+                const shapeRand = Math.random();
+                const shape = shapeRand > 0.6 ? 'rect' : (shapeRand > 0.25 ? 'circle' : 'star');
 
                 this.particles.push({
                     x: origin.x,
@@ -73,15 +71,15 @@ class ConfettiEngine {
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
                     color: this.colors[Math.floor(Math.random() * this.colors.length)],
-                    size: 8 + Math.random() * 8,
+                    size: shape === 'star' ? (10 + Math.random() * 8) : (8 + Math.random() * 9),
                     rotation: Math.random() * Math.PI * 2,
-                    rotationSpeed: (Math.random() - 0.5) * 0.25,
-                    shape: Math.random() > 0.3 ? 'rect' : 'circle',
+                    rotationSpeed: (Math.random() - 0.5) * 0.3,
+                    shape: shape,
                     wobble: Math.random() * 10,
-                    wobbleSpeed: 0.1 + Math.random() * 0.1,
+                    wobbleSpeed: 0.12 + Math.random() * 0.1,
                     alpha: 1,
-                    decay: 0.003 + Math.random() * 0.005,
-                    gravity: 0.35
+                    decay: 0.004 + Math.random() * 0.006,
+                    gravity: 0.38
                 });
             }
         });
@@ -100,8 +98,7 @@ class ConfettiEngine {
             p.x += p.vx;
             p.y += p.vy;
             p.vy += p.gravity;
-            p.vx *= 0.98; // Air resistance
-            p.vy *= 0.98;
+            p.vx *= 0.985;
             p.rotation += p.rotationSpeed;
             p.wobble += p.wobbleSpeed;
             p.alpha -= p.decay;
@@ -112,21 +109,20 @@ class ConfettiEngine {
             }
 
             this.ctx.save();
-            this.ctx.globalAlpha = Math.max(0, p.alpha);
             this.ctx.translate(p.x, p.y);
             this.ctx.rotate(p.rotation);
-
-            const scaleX = Math.cos(p.wobble);
-            this.ctx.scale(scaleX, 1);
-
+            this.ctx.globalAlpha = Math.max(0, p.alpha);
             this.ctx.fillStyle = p.color;
 
             if (p.shape === 'rect') {
-                this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-            } else {
+                const w = p.size * Math.cos(p.wobble);
+                this.ctx.fillRect(-w / 2, -p.size / 2, Math.abs(w), p.size);
+            } else if (p.shape === 'circle') {
                 this.ctx.beginPath();
                 this.ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
                 this.ctx.fill();
+            } else if (p.shape === 'star') {
+                this.drawStar(0, 0, 5, p.size / 2, p.size / 4);
             }
 
             this.ctx.restore();
@@ -135,21 +131,34 @@ class ConfettiEngine {
         if (this.particles.length > 0) {
             this.animationId = requestAnimationFrame(() => this.animate());
         } else {
-            this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
             this.animationId = null;
+            this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
     }
 
-    stop() {
-        this.particles = [];
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
+    drawStar(cx, cy, spikes, outerRadius, innerRadius) {
+        let rot = Math.PI / 2 * 3;
+        let x = cx;
+        let y = cy;
+        let step = Math.PI / spikes;
+
+        this.ctx.beginPath();
+        this.ctx.moveTo(cx, cy - outerRadius);
+        for (let i = 0; i < spikes; i++) {
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            this.ctx.lineTo(x, y);
+            rot += step;
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            this.ctx.lineTo(x, y);
+            rot += step;
         }
-        if (this.ctx) {
-            this.ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        }
+        this.ctx.lineTo(cx, cy - outerRadius);
+        this.ctx.closePath();
+        this.ctx.fill();
     }
 }
 
-window.confettiEngine = new ConfettiEngine();
+window.confetti = new ConfettiEngine();
