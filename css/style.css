@@ -117,27 +117,41 @@ body::before {
 .brand-section {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
 }
 
-.brand-icon {
-    font-size: 2rem;
-    line-height: 1;
-    filter: drop-shadow(0 4px 8px rgba(255, 107, 0, 0.3));
-    animation: rotateSlow 24s linear infinite;
+.brand-logo-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2.5px solid #FFFFFF;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    transition: var(--transition-bounce);
 }
 
-@keyframes rotateSlow {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+.brand-logo-img:hover {
+    transform: scale(1.08) rotate(5deg);
 }
 
 .brand-title {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: #1E1B4B;
     display: flex;
     align-items: center;
+    gap: 10px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.brand-subtitle {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    line-height: 1.2;
+    margin-top: 2px;
+}
     gap: 10px;
     letter-spacing: -0.02em;
 }
@@ -1060,7 +1074,8 @@ body.fullscreen-mode {
 
 body.fullscreen-mode .app-header,
 body.fullscreen-mode .sidebar-panel,
-body.fullscreen-mode .spin-keyboard-hint {
+body.fullscreen-mode .spin-keyboard-hint,
+body.fullscreen-mode .app-footer {
     display: none !important;
 }
 
@@ -1089,6 +1104,60 @@ body.fullscreen-mode .wheel-stage-container {
 body.fullscreen-mode .btn-spin-large {
     font-size: 1.5rem;
     padding: 20px 60px;
+}
+
+/* Footer & Credits */
+.app-footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 2px solid rgba(99, 102, 241, 0.1);
+    padding: 18px 24px;
+    margin-top: auto;
+    z-index: 10;
+    box-shadow: 0 -4px 20px rgba(99, 102, 241, 0.04);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+    flex-wrap: wrap;
+}
+
+.footer-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.footer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.footer-credit {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.footer-credit strong {
+    color: var(--primary-text);
+    font-weight: 800;
+}
+
+.footer-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
 }
 
 /* Animations */
@@ -1126,5 +1195,14 @@ body.fullscreen-mode .btn-spin-large {
 
     .brand-title {
         font-size: 1.15rem;
+    }
+
+    .brand-subtitle {
+        font-size: 0.72rem;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 8px;
     }
 }
