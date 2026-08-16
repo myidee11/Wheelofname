@@ -63,6 +63,23 @@ class WheelApp {
         this.renderHistory();
     }
 
+    getDefaultNames() {
+        return [
+            'กานต์วิภา',
+            'ขวัญข้าว',
+            'จิดาภา',
+            'ชลธิชา',
+            'ณัฐพงษ์',
+            'ธนกร',
+            'ปิยะวัฒน์',
+            'วรัญญา',
+            'ศุภวิชญ์',
+            'อรอนงค์',
+            'กิตติศักดิ์',
+            'พิมพาพร'
+        ];
+    }
+
     // --- State Persistence ---
     loadState() {
         try {
@@ -70,14 +87,31 @@ class WheelApp {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 this.state = { ...this.state, ...parsed };
-                // ensure active class exists
+                // ensure active class exists and has names
+                if (!Array.isArray(this.state.classes) || this.state.classes.length === 0) {
+                    this.state.classes = [
+                        { id: 'default-1', name: 'ห้องเรียนตัวอย่าง (ม.1/1)', items: this.getDefaultNames() }
+                    ];
+                    this.state.activeClassId = 'default-1';
+                }
                 if (!this.state.classes.some(c => c.id === this.state.activeClassId)) {
                     this.state.activeClassId = this.state.classes[0]?.id || 'default-1';
+                }
+                const active = this.getActiveClass();
+                if (active && (!active.items || active.items.length === 0)) {
+                    active.items = this.getDefaultNames();
                 }
             }
         } catch (e) {
             console.error('Failed to load state from localStorage:', e);
         }
+    }
+
+    loadSampleNames() {
+        const currentClass = this.getActiveClass();
+        currentClass.items = this.getDefaultNames();
+        this.syncClassNamesToUI();
+        this.showToast('โหลดรายชื่อตัวอย่างเรียบร้อยแล้ว ✨');
     }
 
     saveState() {
@@ -152,7 +186,8 @@ class WheelApp {
             });
         }
 
-        // Shuffle & Sort & Clear
+        // Sample & Shuffle & Sort & Clear
+        document.getElementById('sampleBtn')?.addEventListener('click', () => this.loadSampleNames());
         document.getElementById('shuffleBtn')?.addEventListener('click', () => this.shuffleNames());
         document.getElementById('sortBtn')?.addEventListener('click', () => this.sortNames());
         document.getElementById('clearBtn')?.addEventListener('click', () => this.clearNames());
