@@ -217,6 +217,16 @@ class WheelApp {
                 if (modal) modal.classList.remove('active');
             });
         });
+
+        // Listen to native fullscreen change
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('fullscreen-mode');
+            }
+            setTimeout(() => {
+                if (this.wheel) this.wheel.resize();
+            }, 100);
+        });
     }
 
     // --- Wheel Spin Logic ---
@@ -728,18 +738,6 @@ class WheelApp {
             toast.style.transform = 'translateY(-10px)';
             toast.style.transition = 'all 0.3s ease';
             setTimeout(() => toast.remove(), 300);
-        }, 2400);
-    }
-
-        // Listen to native fullscreen change
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                document.body.classList.remove('fullscreen-mode');
-            }
-            setTimeout(() => {
-                if (this.wheel) this.wheel.resize();
-            }, 100);
-        });
     }
 
     toggleFullscreen() {

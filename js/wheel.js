@@ -65,27 +65,33 @@ class WheelCanvas {
     }
 
     resize() {
-        const container = this.canvas.parentElement;
+        const stage = document.querySelector('.wheel-stage-container');
+        const container = this.canvas ? this.canvas.parentElement : null;
         if (!container) return;
 
-        // Calculate available space dynamically for large displays & projectors
-        const maxWidth = container.clientWidth;
         const isFullscreen = document.body.classList.contains('fullscreen-mode');
-        const availableHeight = window.innerHeight - (isFullscreen ? 80 : 190);
         
-        // Take maximum possible square size that fits comfortably
-        const size = Math.max(340, Math.min(maxWidth, Math.max(availableHeight, 520)));
+        let availW = container.clientWidth || (stage ? stage.clientWidth - 40 : 520);
+        let availH = isFullscreen 
+            ? (window.innerHeight - 70)
+            : (window.innerHeight - 210);
+
+        if (availW <= 0) availW = 520;
+        if (availH <= 0) availH = 520;
+
+        // Wheel should be a square that fits both width and height cleanly
+        const finalSize = Math.max(320, Math.floor(Math.min(availW, availH)));
         const dpr = window.devicePixelRatio || 1;
 
-        this.canvas.width = size * dpr;
-        this.canvas.height = size * dpr;
-        this.canvas.style.width = `${size}px`;
-        this.canvas.style.height = `${size}px`;
+        this.canvas.width = finalSize * dpr;
+        this.canvas.height = finalSize * dpr;
+        this.canvas.style.width = `${finalSize}px`;
+        this.canvas.style.height = `${finalSize}px`;
 
-        this.size = size;
-        this.radius = (size / 2) * 0.94;
-        this.centerX = size / 2;
-        this.centerY = size / 2;
+        this.size = finalSize;
+        this.radius = (finalSize / 2) * 0.94;
+        this.centerX = finalSize / 2;
+        this.centerY = finalSize / 2;
 
         this.draw();
     }
