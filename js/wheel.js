@@ -61,27 +61,21 @@ class WheelCanvas {
     init() {
         this.resize();
         window.addEventListener('resize', () => this.resize());
+        window.addEventListener('load', () => this.resize());
+        setTimeout(() => this.resize(), 50);
         this.draw();
     }
 
     resize() {
-        const stage = document.querySelector('.wheel-stage-container');
         const container = this.canvas ? this.canvas.parentElement : null;
         if (!container) return;
 
-        const isFullscreen = document.body.classList.contains('fullscreen-mode');
-        
-        let availW = container.clientWidth || (stage ? stage.clientWidth - 40 : 520);
-        let availH = isFullscreen 
-            ? (window.innerHeight - 70)
-            : (window.innerHeight - 210);
+        const w = container.clientWidth || 480;
+        const h = container.clientHeight || 480;
 
-        if (availW <= 0) availW = 520;
-        if (availH <= 0) availH = 520;
-
-        // Wheel should be a square that fits both width and height cleanly
-        const finalSize = Math.max(320, Math.floor(Math.min(availW, availH)));
-        const dpr = window.devicePixelRatio || 1;
+        // Take optimal square size strictly bounded by both container width and height
+        const finalSize = Math.max(260, Math.floor(Math.min(w, h) * 0.96));
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
         this.canvas.width = finalSize * dpr;
         this.canvas.height = finalSize * dpr;

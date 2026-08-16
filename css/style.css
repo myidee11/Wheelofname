@@ -211,11 +211,13 @@ body::before {
     grid-template-columns: 1fr 380px;
     gap: 20px;
     padding: 16px 24px;
-    max-width: 1750px;
+    max-width: 1650px;
     margin: 0 auto;
     width: 100%;
     flex: 1;
-    min-height: calc(100vh - 80px);
+    height: calc(100vh - 85px);
+    min-height: 520px;
+    box-sizing: border-box;
 }
 
 /* Wheel Stage Area */
@@ -223,16 +225,17 @@ body::before {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     position: relative;
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: var(--radius-lg);
     border: 1px solid rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     box-shadow: var(--shadow-md);
-    padding: 20px;
-    min-height: calc(100vh - 120px);
-    flex: 1;
+    padding: 18px 24px 16px;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .wheel-canvas-wrapper {
@@ -244,12 +247,16 @@ body::before {
     user-select: none;
     flex: 1;
     width: 100%;
+    min-height: 0; /* Crucial: allows flex child to shrink properly */
+    overflow: hidden;
 }
 
 #wheelCanvas {
+    display: block;
     max-width: 100%;
-    height: auto;
-    filter: drop-shadow(0 12px 28px rgba(108, 99, 255, 0.15));
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 24px rgba(108, 99, 255, 0.14));
     transition: transform 0.15s ease-out;
 }
 
@@ -336,9 +343,8 @@ body::before {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    height: calc(100vh - 130px);
-    position: sticky;
-    top: 90px;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 /* Tab Navigation */
