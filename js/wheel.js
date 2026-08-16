@@ -68,7 +68,13 @@ class WheelCanvas {
         const container = this.canvas.parentElement;
         if (!container) return;
 
-        const size = Math.min(container.clientWidth, container.clientHeight || 560);
+        // Calculate available space dynamically for large displays & projectors
+        const maxWidth = container.clientWidth;
+        const isFullscreen = document.body.classList.contains('fullscreen-mode');
+        const availableHeight = window.innerHeight - (isFullscreen ? 80 : 190);
+        
+        // Take maximum possible square size that fits comfortably
+        const size = Math.max(340, Math.min(maxWidth, Math.max(availableHeight, 520)));
         const dpr = window.devicePixelRatio || 1;
 
         this.canvas.width = size * dpr;
@@ -77,7 +83,7 @@ class WheelCanvas {
         this.canvas.style.height = `${size}px`;
 
         this.size = size;
-        this.radius = (size / 2) * 0.92;
+        this.radius = (size / 2) * 0.94;
         this.centerX = size / 2;
         this.centerY = size / 2;
 
@@ -320,26 +326,36 @@ class WheelCanvas {
         ctx.translate(cx, cy);
         ctx.rotate(midAngle);
 
-        // Calculate dynamic font size based on slice count and length
-        let fontSize = Math.floor(Math.min(20, Math.max(11, 280 / Math.sqrt(totalSlices))));
-        if (totalSlices <= 6) fontSize = 22;
-        else if (totalSlices <= 12) fontSize = 18;
-        else if (totalSlices <= 24) fontSize = 15;
-        else if (totalSlices <= 40) fontSize = 12;
-        else fontSize = 10;
+        // Scaled large font size tailored for classroom screen projection
+        let fontSize;
+        if (totalSlices <= 4) {
+            fontSize = Math.floor(Math.min(36, radius * 0.13));
+        } else if (totalSlices <= 8) {
+            fontSize = Math.floor(Math.min(30, radius * 0.11));
+        } else if (totalSlices <= 14) {
+            fontSize = Math.floor(Math.min(24, radius * 0.088));
+        } else if (totalSlices <= 22) {
+            fontSize = Math.floor(Math.min(20, radius * 0.072));
+        } else if (totalSlices <= 35) {
+            fontSize = Math.floor(Math.min(17, radius * 0.058));
+        } else if (totalSlices <= 50) {
+            fontSize = Math.floor(Math.min(14, radius * 0.046));
+        } else {
+            fontSize = Math.max(11, Math.floor(radius * 0.038));
+        }
 
-        ctx.font = `600 ${fontSize}px 'Prompt', 'Kanit', -apple-system, sans-serif`;
+        ctx.font = `700 ${fontSize}px 'Prompt', 'Kanit', sans-serif`;
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
 
-        // Deep pastel slate text color for optimal contrast
-        ctx.fillStyle = '#2D3748';
+        // Deep high-contrast slate color
+        ctx.fillStyle = '#1A202C';
 
         // Available width along the radius (from hub to outer rim)
-        const hubRadius = radius * 0.22;
-        const maxTextWidth = radius - hubRadius - 20;
+        const hubRadius = radius * 0.20;
+        const maxTextWidth = radius - hubRadius - 22;
 
-        // Truncate text with ellipsis if too long
+        // Truncate text with ellipsis if necessary
         let displayText = text;
         let textMetrics = ctx.measureText(displayText);
         if (textMetrics.width > maxTextWidth) {
@@ -349,11 +365,15 @@ class WheelCanvas {
             displayText += '...';
         }
 
-        // Draw text with subtle white stroke for maximum legibility
-        ctx.lineWidth = 3;
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.strokeText(displayText, radius - 16, 0);
-        ctx.fillText(displayText, radius - 16, 0);
+        // Draw crisp solid white halo around text so it is 100% readable from the back of the classroom
+        ctx.lineWidth = Math.max(3.5, fontSize * 0.22);
+        ctx.lineJoin = 'round';
+        ctx.miterLimit = 2;
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.strokeText(displayText, radius - 14, 0);
+
+        // Fill text
+        ctx.fillText(displayText, radius - 14, 0);
 
         ctx.restore();
     }

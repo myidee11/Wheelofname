@@ -208,13 +208,14 @@ body::before {
 /* Main Layout */
 .main-layout {
     display: grid;
-    grid-template-columns: 1fr 420px;
-    gap: 24px;
-    padding: 24px 28px;
-    max-width: 1600px;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    padding: 16px 24px;
+    max-width: 1750px;
     margin: 0 auto;
     width: 100%;
     flex: 1;
+    min-height: calc(100vh - 80px);
 }
 
 /* Wheel Stage Area */
@@ -224,13 +225,14 @@ body::before {
     align-items: center;
     justify-content: center;
     position: relative;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.75);
     border-radius: var(--radius-lg);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
     box-shadow: var(--shadow-md);
-    padding: 24px;
-    min-height: 580px;
+    padding: 20px;
+    min-height: calc(100vh - 120px);
+    flex: 1;
 }
 
 .wheel-canvas-wrapper {
@@ -240,12 +242,14 @@ body::before {
     justify-content: center;
     cursor: pointer;
     user-select: none;
+    flex: 1;
+    width: 100%;
 }
 
 #wheelCanvas {
     max-width: 100%;
     height: auto;
-    filter: drop-shadow(0 8px 24px rgba(108, 99, 255, 0.12));
+    filter: drop-shadow(0 12px 28px rgba(108, 99, 255, 0.15));
     transition: transform 0.15s ease-out;
 }
 
@@ -872,35 +876,35 @@ input:checked + .slider:before {
 /* Winner Celebration Modal */
 .winner-modal-card {
     text-align: center;
-    padding: 36px 24px;
-    max-width: 520px;
+    padding: 40px 28px;
+    max-width: 580px;
     background: linear-gradient(180deg, #FFFFFF 0%, #F8F9FE 100%);
     border: 2px solid var(--pastel-peach);
 }
 
 .winner-trophy-icon {
-    font-size: 4rem;
+    font-size: 5rem;
     margin-bottom: 12px;
     animation: bounceTrophy 1s infinite alternate;
 }
 
 .winner-subtitle {
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--primary-text);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     margin-bottom: 8px;
 }
 
 .winner-name-display {
-    font-size: 2.5rem;
+    font-size: clamp(2.8rem, 6vw, 4.8rem);
     font-weight: 800;
-    color: var(--text-main);
-    line-height: 1.2;
-    margin-bottom: 24px;
+    color: #1A202C;
+    line-height: 1.15;
+    margin-bottom: 28px;
     word-break: break-word;
-    text-shadow: 0 4px 12px rgba(124, 119, 255, 0.15);
+    text-shadow: 0 6px 16px rgba(124, 119, 255, 0.2);
 }
 
 .winner-actions-row {

@@ -731,6 +731,17 @@ class WheelApp {
         }, 2400);
     }
 
+        // Listen to native fullscreen change
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                document.body.classList.remove('fullscreen-mode');
+            }
+            setTimeout(() => {
+                if (this.wheel) this.wheel.resize();
+            }, 100);
+        });
+    }
+
     toggleFullscreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(() => {});
@@ -743,7 +754,7 @@ class WheelApp {
         }
         setTimeout(() => {
             if (this.wheel) this.wheel.resize();
-        }, 150);
+        }, 120);
     }
 }
 
