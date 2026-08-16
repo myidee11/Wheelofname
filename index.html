@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วงล้อสุ่มชื่อนักเรียน - Classroom Wheel of Names (ไม่มีโฆษณา)</title>
+    <meta name="description" content="เว็บแอปพลิเคชันสุ่มชื่อนักเรียนแบบวงล้อ โทนสีพาสเทลสวยงาม สำหรับคุณครูและห้องเรียน ไม่มีโฆษณา มีเสียงเอฟเฟกต์ และระบบแบ่งกลุ่ม">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎡</text></svg>">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Header -->
+        <header class="app-header">
+            <div class="brand-section">
+                <div class="brand-icon">🎡</div>
+                <div>
+                    <h1 class="brand-title">
+                        วงล้อสุ่มชื่อนักเรียน
+                        <span class="brand-badge">No Ads</span>
+                    </h1>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Class Selector -->
+                <div class="class-selector-wrapper" title="เลือกหรือจัดการห้องเรียน">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <select id="classSelect" class="class-select" aria-label="เลือกห้องเรียน"></select>
+                    <button id="manageClassBtn" class="tool-btn" title="จัดการห้องเรียน" style="padding: 4px 8px; border: none; background: transparent;">
+                        ⚙️
+                    </button>
+                </div>
+
+                <!-- Quick Sound Toggle -->
+                <button id="soundToggleBtn" class="icon-btn" title="เปิด/ปิดเสียง" aria-label="เปิดปิดเสียง">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                </button>
+
+                <!-- Fullscreen Button -->
+                <button id="fullscreenBtn" class="icon-btn" title="โหมดเต็มจอ (สำหรับโปรเจกเตอร์)" aria-label="โหมดเต็มจอ">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Exit Fullscreen Button (Floating) -->
+        <button id="exitFullscreenBtn" class="icon-btn fullscreen-exit-btn" title="ออกจากโหมดเต็มจอ">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Main Content Layout -->
+        <main class="main-layout">
+            <!-- Left: Wheel Stage -->
+            <section class="wheel-stage-container">
+                <div class="wheel-canvas-wrapper" title="คลิกที่วงล้อเพื่อเริ่มหมุน">
+                    <canvas id="wheelCanvas"></canvas>
+                </div>
+
+                <div class="wheel-controls-bar">
+                    <button id="spinBtn" class="btn-spin-large">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        <span>หมุนวงล้อ</span>
+                    </button>
+                </div>
+
+                <div class="spin-keyboard-hint">
+                    กดปุ่ม <span class="kbd-badge">Spacebar</span> หรือคลิกที่วงล้อเพื่อหมุน
+                </div>
+            </section>
+
+            <!-- Right: Tabbed Control Panel -->
+            <aside class="sidebar-panel">
+                <!-- Tab Headers -->
+                <nav class="tab-navigation">
+                    <button class="tab-btn active" data-tab="names">
+                        <span>📝</span> รายชื่อ
+                    </button>
+                    <button class="tab-btn" data-tab="groups">
+                        <span>👥</span> แบ่งกลุ่ม
+                    </button>
+                    <button class="tab-btn" data-tab="history">
+                        <span>🏆</span> ประวัติ
+                    </button>
+                    <button class="tab-btn" data-tab="settings">
+                        <span>⚙️</span> ตั้งค่า
+                    </button>
+                </nav>
+
+                <div class="tab-content-container">
+                    <!-- Tab 1: Names -->
+                    <div id="namesPane" class="tab-pane active">
+                        <div class="names-toolbar">
+                            <span id="namesCountBadge" class="names-count-badge">0 รายชื่อ</span>
+                            <div class="toolbar-buttons">
+                                <button id="shuffleBtn" class="tool-btn" title="สลับตำแหน่ง">🔀 สลับ</button>
+                                <button id="sortBtn" class="tool-btn" title="เรียงลำดับ ก-ฮ / A-Z">📶 เรียง</button>
+                                <button id="clearBtn" class="tool-btn" title="ล้างทั้งหมด" style="color: var(--danger);">🗑️ ล้าง</button>
+                            </div>
+                        </div>
+
+                        <div class="names-quick-input">
+                            <input type="text" id="quickAddInput" class="input-text" placeholder="พิมพ์ชื่อแล้วกด Enter...">
+                            <button id="quickAddBtn" class="btn-secondary">เพิ่ม</button>
+                        </div>
+
+                        <div class="names-textarea-wrapper">
+                            <textarea id="namesTextarea" class="names-textarea" placeholder="พิมพ์หรือวางรายชื่อนักเรียนที่นี่ (บรรทัดละ 1 ชื่อ)..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Group Generator -->
+                    <div id="groupsPane" class="tab-pane">
+                        <div class="group-control-group">
+                            <div class="group-mode-selector">
+                                <label class="mode-radio-label active" data-mode="byCount">
+                                    <input type="radio" name="groupMode" value="byCount" checked>
+                                    <span>แบ่งตามจำนวนกลุ่ม</span>
+                                </label>
+                                <label class="mode-radio-label" data-mode="bySize">
+                                    <input type="radio" name="groupMode" value="bySize">
+                                    <span>แบ่งตามจำนวนคน/กลุ่ม</span>
+                                </label>
+                            </div>
+
+                            <div class="group-input-row">
+                                <span id="groupStepperLabel" style="font-weight: 600; font-size: 0.9rem;">จำนวนกลุ่ม:</span>
+                                <div class="number-stepper">
+                                    <button id="stepperMinus" class="stepper-btn">−</button>
+                                    <span id="groupStepperVal" class="stepper-val">3</span>
+                                    <button id="stepperPlus" class="stepper-btn">+</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+                            <button id="generateGroupsBtn" class="btn-secondary" style="flex: 1; background: var(--primary); color: #FFF; border: none;">
+                                🎲 สุ่มแบ่งกลุ่ม
+                            </button>
+                            <button id="copyGroupsBtn" class="btn-secondary" style="display: none;" title="คัดลอกผลลัพธ์">
+                                📋 คัดลอก
+                            </button>
+                        </div>
+
+                        <div id="groupsResultContainer" class="groups-result-container">
+                            <div style="text-align: center; color: var(--text-muted); padding: 30px 10px; font-size: 0.88rem;">
+                                กดปุ่ม "สุ่มแบ่งกลุ่ม" เพื่อจัดกลุ่มนักเรียนในห้องโดยอัตโนมัติ
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: History -->
+                    <div id="historyPane" class="tab-pane">
+                        <div class="history-header">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">รายชื่อที่สุ่มได้</span>
+                            <button id="clearHistoryBtn" class="tool-btn" style="color: var(--danger);">ล้างประวัติ</button>
+                        </div>
+                        <div id="historyList" class="history-list"></div>
+                    </div>
+
+                    <!-- Tab 4: Settings -->
+                    <div id="settingsPane" class="tab-pane">
+                        <div class="settings-section">
+                            <!-- Spin Duration -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-title">ระยะเวลาการหมุน</span>
+                                    <span class="setting-desc">ปรับความเร็วและความตื่นเต้น</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <input type="range" id="durationSlider" class="range-slider" min="3" max="15" step="1" value="6">
+                                    <span id="durationVal" style="font-weight: 600; font-size: 0.85rem; width: 60px; text-align: right;">6 วินาที</span>
+                                </div>
+                            </div>
+
+                            <!-- Sound FX Toggle -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-title">เสียงเอฟเฟกต์ (Sound FX)</span>
+                                    <span class="setting-desc">เสียงติ๊กของวงล้อและเสียงเฉลิมฉลอง</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="soundSwitch" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Voice Announcer Toggle -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-title">เสียงอ่านชื่อผู้ชนะ (TTS)</span>
+                                    <span class="setting-desc">อ่านออกเสียงชื่อผู้โชคดีภาษาไทยอัตโนมัติ</span>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="voiceSwitch" checked>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <!-- Wheel Pastel Theme Presets -->
+                            <div style="margin-top: 6px;">
+                                <div class="setting-title" style="margin-bottom: 4px;">ธีมสีพาสเทลวงล้อ</div>
+                                <div class="theme-picker-grid">
+                                    <button class="theme-option-btn active" data-theme="pastelRainbow">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #FFB7B2;"></span>
+                                            <span style="background: #FFDAC1;"></span>
+                                            <span style="background: #E2F0CB;"></span>
+                                            <span style="background: #B5EAD7;"></span>
+                                            <span style="background: #C7CEEA;"></span>
+                                        </div>
+                                        <span class="theme-option-name">Pastel Rainbow</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="candySweet">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #FF9AA2;"></span>
+                                            <span style="background: #FFF1C5;"></span>
+                                            <span style="background: #8FC1E3;"></span>
+                                            <span style="background: #E8DFF5;"></span>
+                                            <span style="background: #F3C4FB;"></span>
+                                        </div>
+                                        <span class="theme-option-name">Candy Sweet</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="mintPeach">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #A8E6CF;"></span>
+                                            <span style="background: #DCEDC1;"></span>
+                                            <span style="background: #FFD3B6;"></span>
+                                            <span style="background: #FFAAA6;"></span>
+                                            <span style="background: #BEE1E6;"></span>
+                                        </div>
+                                        <span class="theme-option-name">Mint & Peach</span>
+                                    </button>
+
+                                    <button class="theme-option-btn" data-theme="sakuraLilac">
+                                        <div class="theme-preview-bars">
+                                            <span style="background: #FFC8DD;"></span>
+                                            <span style="background: #FFAFCC;"></span>
+                                            <span style="background: #BDE0FE;"></span>
+                                            <span style="background: #CDB4DB;"></span>
+                                            <span style="background: #D0F4DE;"></span>
+                                        </div>
+                                        <span class="theme-option-name">Sakura Lilac</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Winner Celebration Modal -->
+    <div id="winnerModal" class="modal-overlay">
+        <div class="modal-card winner-modal-card">
+            <div class="winner-trophy-icon">🏆</div>
+            <div class="winner-subtitle">🎉 ยินดีด้วย 🎉</div>
+            <div id="winnerNameDisplay" class="winner-name-display">-</div>
+
+            <div class="winner-actions-row">
+                <button id="removeWinnerBtn" class="btn-remove-winner">
+                    🗑️ ลบชื่อออก
+                </button>
+                <button id="keepWinnerBtn" class="btn-keep-winner">
+                    ✨ เก็บชื่อไว้ / สุ่มต่อ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Management Modal -->
+    <div id="classModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">🏫 จัดการห้องเรียน</h3>
+                <button class="tool-btn modal-close-btn" style="border: none; font-size: 1.2rem;">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+                    <input type="text" id="newClassNameInput" class="input-text" placeholder="ชื่อห้องเรียนใหม่ (เช่น ม.1/2)">
+                    <button id="addNewClassBtn" class="btn-secondary" style="background: var(--primary); color: #FFF; border: none;">+ เพิ่มห้อง</button>
+                </div>
+                <div id="classListContainer" style="max-height: 240px; overflow-y: auto;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary modal-close-btn">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/confetti.js"></script>
+    <script src="js/wheel.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
